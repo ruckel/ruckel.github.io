@@ -1,0 +1,95 @@
+/*sections*/
+
+body{
+    background-color: hotpink;
+    font-family: "Fira Sans", serif;
+    margin: auto;
+}
+
+nav{
+    position: sticky;
+}
+
+img {
+    alignment: right;
+}
+
+article{
+    text-align: center;
+    width: 500px;
+    max-width: 90%;
+}
+div{
+    alignment: center;
+    text-align: center;
+}
+
+p{
+    text-align: center;
+    width: 500px;
+    max-width: 90%;
+}
+
+h1 {
+    color: purple;
+    font-size: 60px;
+
+    text-align: center;
+}
+
+footer{
+    text-align: center;
+    height: auto;
+    background-color: #333;
+    color: #fff;
+    clear: both;
+}
+
+/* lists */
+ul{
+    list-style-type: none;
+    alignment: left;
+    font-family: Verdana, sans-serif;
+}
+
+ol{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    alignment: left;
+}
+
+li a {
+    float: left;
+    display: block;
+    color: white;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+li a:hover {
+    background-color: #111;
+}
+
+/* classes, pseudoclasses */
+
+.text-shadowed {
+    text-shadow: 2px 2px #999;
+}
+
+a:link { /* unvisited link */
+    color: white;
+}
+a:visited { /* visited link */
+    color: white;
+}
+a:hover { /* mouse over link */
+    color: green;
+}
+a:active { /* selected link */
+    color: blue;
+}
