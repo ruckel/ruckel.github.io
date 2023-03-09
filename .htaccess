@@ -3,7 +3,7 @@
 deny from all
 </Files>
 Options Indexes
-ErrorDocument 404 flashback.org
+ErrorDocument 404 404.html
 order deny,allow
 
 

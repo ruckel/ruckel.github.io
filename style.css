@@ -79,6 +79,13 @@ li a:hover {
 .text-shadowed {
     text-shadow: 2px 2px #999;
 }
+.four-o-four{
+    margin: auto;
+    align-content: center;
+    text-align: center;
+    padding: 10px;
+    font-size: 600%;
+}
 
 .center {
     margin: auto;
