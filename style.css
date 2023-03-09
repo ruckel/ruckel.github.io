@@ -1,13 +1,51 @@
 
 
 body{
-    background-color: aqua;
+    background-color: hotpink;
     font-family: "Fira Sans", serif;
     text-align: center;
-    text-shadow: 2px 2px aquamarine;
+    /*text-shadow: 2px 2px aquamarine;*/
+    margin: auto;
+    width: 500px;
+    max-width: 1000px;
+}
+img {
+    alignment: right;
 }
 
 h1 {
     color: purple;
     font-size: 60px;
+}
+
+ol{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+
+li {
+}
+
+li a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+li a:hover {
+    background-color: #111;
+}
+
+footer{
+    /*position: fixed;
+    bottom: 0;
+    right: 0;
+    width: auto;*/
+
 }
