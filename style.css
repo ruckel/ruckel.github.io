@@ -1,0 +1,13 @@
+
+
+body{
+    background-color: aqua;
+    font-family: "Fira Sans", serif;
+    text-align: center;
+    text-shadow: 2px 2px aquamarine;
+}
+
+h1 {
+    color: purple;
+    font-size: 60px;
+}
