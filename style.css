@@ -1,7 +1,9 @@
 /*sections*/
 
 body {
-    background-color: #777;
+    /*background-color: #777;
+    */
+    background-color: hotpink;
     font-family: "Fira Sans", serif;
     margin: auto;
     display: flex;
@@ -23,6 +25,7 @@ article {
 footer {
     height: auto;
     margin-top: auto;
+    background-color: hotpink;
 }
 
 aside {
@@ -35,8 +38,8 @@ aside {
 /* lists */
 ul {
     list-style-type: none;
-    text-align: center;
     font-family: "Comic Sans MS", sans-serif;
+    padding-right: 10px;
 }
 
 ol {
@@ -175,24 +178,29 @@ a:active { /* selected link */
         transform: none;
     }
 }
+.earlier-projects{
+    margin: auto;
+}
 .gallery {
-    margin: 15px;
+    margin: 2px;
     border: 2px solid #111;
-    background-color: #888;
+    background-color: darkmagenta;
     float: left;
-    width: 180px;
+    width: 200px;
+    height: 200px;
 }
 .gallery:hover {
-    border: 2px solid hotpink;
+    border: 2px solid whitesmoke;
 }
 .gallery img {
     width: 80%;
     height: 80%;
-    margin: 20px;
+    margin: 5px;
 }
 .desc {
-    padding: 15px;
+    padding: 5px;
     text-align: center;
+    color: white;
 }
 .indexfren{
     margin: auto;
@@ -203,4 +211,10 @@ a:active { /* selected link */
 }
 .indexfren:hover{
     transform: rotate(720deg);
+}
+hr{
+    background-color: white;
+    color: white;
+    height: 1px;
+    border: none;
 }
