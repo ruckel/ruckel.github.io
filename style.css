@@ -232,3 +232,7 @@ hr{
     height: 1px;
     border: none;
 }
+#center{
+    justify-content: center;
+    align-items: center;
+}
