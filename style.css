@@ -9,7 +9,6 @@
 body {
     /*background-color: #777;
     */
-    background-color: dimgray;
     font-family: "Fira Sans", serif;
     margin: auto;
     display: flex;
@@ -17,6 +16,10 @@ body {
     min-height: 100vh;
     justify-content: center;
     align-items: center;
+    background: rgb(105, 5, 121);
+    background: linear-gradient(90deg, rgba(7, 1, 15, 1) 0%, rgba(222, 15, 255, 1) 50%, rgba(7, 1, 15, 1) 100%);
+
+
 }
 
 h1 {
@@ -29,8 +32,13 @@ h2 {
     text-align: center;
     color: purple;
     font-size: 60px;
-
 }
+h3{
+    font-size: 60px;
+    text-align: center;
+    color: whitesmoke;
+}
+
 
 article {
     width: 600px;
