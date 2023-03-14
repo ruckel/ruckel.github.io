@@ -9,12 +9,14 @@
 body {
     /*background-color: #777;
     */
-    background-color: hotpink;
+    background-color: dimgray;
     font-family: "Fira Sans", serif;
     margin: auto;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    justify-content: center;
+    align-items: center;
 }
 
 h1 {
@@ -50,8 +52,7 @@ aside {
 
 /* lists */
 ul {
-    list-style-type: none;
-    font-family: "Comic Sans MS", sans-serif;
+    list-style-type: square;
     padding-right: 10px;
 }
 
