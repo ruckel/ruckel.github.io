@@ -4,6 +4,7 @@
 
 body {
     font-family: "Fira Sans", serif;
+    color: #1a1a1a;
     margin: auto;
     display: flex;
     flex-direction: column;
@@ -11,12 +12,16 @@ body {
     justify-content: center;
     align-items: center;
     background: rgb(105, 5, 121);
-    background: linear-gradient(90deg, rgba(7, 1, 15, 1) 0%, rgba(222, 15, 255, 1) 50%, rgba(7, 1, 15, 1) 100%);
+    background: linear-gradient(90deg, rgba(20, 20, 20, 1) 0%, rgba(200, 200, 200, 1) 50%, rgba(20, 20, 20, 1) 100%);
 
 }
 
 article {
-
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    max-width: 45%;
 }
 
 div {
@@ -35,6 +40,7 @@ hr {
 }
 
 .intro {
+    margin: 25px 0 0;
     font-weight: bold;
 }
 
