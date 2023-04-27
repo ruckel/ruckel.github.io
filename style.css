@@ -4,7 +4,7 @@
 
 body {
     font-family: "Fira Sans", serif;
-    background-color: purple;
+    background-color: #f2f4f4;
     /*background: rgb(105, 5, 121);*/
     /*background: linear-gradient(90deg, rgba(20, 20, 20, 1) 0%, rgba(200, 200, 200, 1) 50%, rgba(20, 20, 20, 1) 100%);*/
     -ms-overflow-style: none;  /* IE and Edge */
@@ -16,10 +16,10 @@ body {
     display: none;
 }
 
-/*article {*/
-/*    justify-content: center;*/
-/*    align-items: center;*/
-/*}*/
+article {
+    width: 80vh;
+
+}
 
 div {
 
@@ -34,6 +34,8 @@ h2 {
 
 
 .content-wrapper {
+    display: grid;
+    justify-items: center;
 }
 
 
@@ -47,7 +49,7 @@ h2 {
     font-weight: bold;
     display: flex;
     align-items: center;
-    background-color: darkblue;
+    /*background-color: darkblue;*/
     font-size: x-large;
 }
 .intro-container {
@@ -56,25 +58,31 @@ margin-left: 20%;
 
 .name {
     font-size: xxx-large;
-    color: red;
+    color: darkmagenta;
 }
 
 .links {
     height: 35vh;
     background-color: #1a1a1a;
-    display: grid;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     }
 
 .link {
-    font-size: xxx-large;
-    color: red;
+    font-size: xx-large;
+    color: snow;
     text-decoration: none;
-    border: solid white;
-    background-color: white;
+    /*border: solid white;*/
+    /*background-color: white;*/
+    max-width: 50%;
     margin: 0% 0% 0%;
-    border-radius: 1%;
+    /*border-radius: 1%;*/
+}
+
+.link-div {
+    margin: 1% 0% 1%;
 }
 
 .link:hover {
@@ -85,7 +93,6 @@ margin-left: 20%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: snow;
 }
 
 .wrapper-about {
@@ -104,10 +111,16 @@ margin-left: 20%;
 /* resume part*/
 .history {
     margin: 0;
-    background-color: gray;
+    background-color: black;
+    color: snow;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.bigger-title {
+
+    font-size: xxx-large;
 }
 
 .wrapper-history {
@@ -118,10 +131,10 @@ margin-left: 20%;
 
 .resume-item {
     margin-top: 2%;
+    margin-bottom: 7%;
 }
 
 .resume-title {
-
     font-weight: bold;
 }
 
@@ -133,7 +146,11 @@ margin-left: 20%;
 
 }
 
-.footer {
+.ten-vh-divider{
+    height: 10vh;
+}
+
+.three-vh-divider {
     height: 3vh;
 
 }
