@@ -78,6 +78,7 @@
   <input type="text" id="apiUrlInput" placeholder="Enter api url" />
   <button id="setApiUrl">Set API url</button>
 </div>
+<div id="apiUrl"></div>
 
 <script>
   const urlParams = new URLSearchParams(window.location.search);
@@ -94,6 +95,7 @@
   const apiDiv = document.getElementById('api')
   const apiInput = document.getElementById('apiUrlInput')
   const apiInputBtn = document.getElementById('setApiUrl')
+  const apiUrlDiv = document.getElementById('apiUrl')
 
   async function generateOTP(secret) {
     function base32tohex(base32) {
@@ -259,6 +261,8 @@
     updateOTP();
     scheduleUpdates();
     updateTimer();
+    apiUrlDiv.textContent = `api url: ${apiUrl}`
+    if (apiUrl !== 'http://localhost:8000') apiDiv.className = 'hidden'
   }
   main()
 </script>
