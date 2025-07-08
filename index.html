@@ -156,9 +156,13 @@
   const updateOTP = async () => {
     if (!secret) {
       otpEl.textContent = 'No secret';
+      timerEl.className ='timer hidden'
+      updateTimer()
       return;
     }
     otpEl.textContent = await generateOTP(secret)
+    updateTimer()
+    timerEl.className = 'timer'
   }
   function updateTimer() {
     if (!secret) return
@@ -181,7 +185,6 @@
     if (value) {
       secret = value;
       updateOTP();
-      updateTimer()
     }
   });
 
@@ -189,7 +192,6 @@
     secret = await getSecret(id)
     console.log({secret})
     updateOTP()
-    updateTimer()
   }
   secretBtn1.addEventListener('click', () => { getPreDefSecret(1) })
   secretBtn2.addEventListener('click', () => { getPreDefSecret(2) })
