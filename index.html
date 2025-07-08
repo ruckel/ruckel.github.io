@@ -1,202 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KD Experimental</title>
-    <link rel="stylesheet" href="../style.css">
+  <meta charset="UTF-8">
+  <title>ruckel's OTP generator</title>
+  <style>
+    body {
+      font-family: Cantarell, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #222;
+      color: #eee;
+    }
+    h1 {
+      font-size: 2rem;
+      color: inherit;
+    }
+    .otp {
+      font-size: 3rem;
+      margin: 1rem;
+      background: #eee;
+      color: #111;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .timer { color: #666; }
+    .secret-input {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+    }
+    input[type="text"] {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: none;
+      width: 300px;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      background: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-<div>
-    <section class="intro">
-        <div class="intro-container">
-            <div>i am</div>
-            <div class="name">Kevin Dybeck</div>
-            <div>developer in the making</div>
-        </div>
-    </section>
+<h1>OTP generator</h1>
+<div class="otp" id="otp">Loading...</div>
+<div class="timer" id="timer"></div>
 
-    <section class="links">
-        <!--    <h2>links</h2>-->
-        <div class="link-div"><a class="link" href="https://www.linkedin.com/in/kevindybeck/" target="_blank">linkedin</a></div>
-        <div class="link-div"><a class="link" href="https://www.github.com/ruckel" target="_blank">github</a></div>
-        <div class="link-div"><a class="link" href="resources/K Dybeck, Resume.pdf" target="_blank">resumé</a></div>
-        <div class="link-div"><a class="link" href="mailto:kevindybeck@pm.me">kevindybeck@pm.me</a></div>
-    </section>
+<div class="secret-input">
+  <input type="text" id="secretInput" placeholder="Enter secret" />
+  <button id="setSecret">Set Secret</button>
+</div>
 
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const stringToReplace = "{{OTP_SECRET}}"
+  const stringToReplaceAsB64 = 'e3tPVFBfU0VDUkVUfX0='
+  let secret = urlParams.get('secret') || stringToReplace;
 
+  const otpEl = document.getElementById('otp');
+  const timerEl = document.getElementById('timer');
+  const secretInput = document.getElementById('secretInput');
+  const setSecretBtn = document.getElementById('setSecret');
 
-    <section class="about-me">
-        <div class="wrapper-about">
-            <div class="ten-vh-divider"></div>
-<!--            <h2 class="about-title">who am i?</h2>-->
+  async function generateOTP(secret) {
+    function base32tohex(base32) {
+      const base32chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+      let bits = "";
+      let hex = "";
 
-            <p>
-                It took me a few years to decide what I wanted to be when I grow up.
-                After spending my upper secondary school going from computer science to music production and live audio
-                followed by a few internships in the field I realized that music was too much of a passion for me to
-                compete
-                in the market.
-                Now I am back to computers, or studying how to manipulate them. I have always been somewhat of a nerd.
-            </p>
-            <div class="three-vh-divider"></div>
-            <H3 class="bigger-title">a few points that makes me, me:</H3>
+      base32 = base32.replace(/=+$/, "").toUpperCase();
 
-            <h3>I am a huge music nerd</h3>
-            <div class="point-text ">Every year I keep racking up 100 000+ minutes on my Spotify wrapped and I own more
-                music
-                instruments than I am willing to openly admit.
-            </div>
+      for (let i = 0; i < base32.length; i++) {
+        const val = base32chars.indexOf(base32.charAt(i));
+        if (val === -1) throw new Error(`Invalid base32 character: ${base32.charAt(i)}`);
+        bits += val.toString(2).padStart(5, "0");
+      }
 
-            <h3>International mindset</h3>
-            <div class="point-text">Expats in Sweden connect well with me. I connect well with expats. More than once I
-                have become their "in
-                between" when they experience nordic behaviour and culture.
-            </div>
+      for (let i = 0; i + 4 <= bits.length; i += 4) {
+        hex += parseInt(bits.substring(i, i + 4), 2).toString(16);
+      }
 
-            <h3>My dream: Travel by living - with a base in Stockholm</h3>
-            <div class="point-text">I want to see as much of the world as possible. But not as a tourist. As a local.
-                Being
-                able to spend 3+ months in a place while working seems like the perfect way to achieve this.
-            </div>
+      return hex;
+    }
 
-            <h3>Open source aficionado</h3>
-            <div class="point-text">Openly auditable services and products are important to create trust and
-                transparency.
-            </div>
+    function hexToBytes(hex) {
+      const bytes = [];
+      for (let c = 0; c < hex.length; c += 2) {
+        bytes.push(parseInt(hex.substr(c, 2), 16));
+      }
+      return new Uint8Array(bytes);
+    }
 
-            <h3>Design minded</h3>
-            <div class="point-text">Good design makes a service or product intuitive. Intuition is a powerful tool.
-            </div>
+    const keyHex = base32tohex(secret);
+    const epoch = Math.floor(Date.now() / 1000);
+    const timeHex = Math.floor(epoch / 30).toString(16).padStart(16, "0");
 
-            <h3>Privacy concious</h3>
-            <div class="point-text">Swedes usually looks at me as if I am about to put on a tin foil hat whenever I
-                mention
-                privacy. But I am not, I just try to adapt to a somewhat privacy conscious lifestyle.
-            </div>
+    const cryptoKey = await crypto.subtle.importKey(
+      "raw",
+      hexToBytes(keyHex),
+      { name: "HMAC", hash: "SHA-1" },
+      false,
+      ["sign"]
+    );
 
-            <div class="ten-vh-divider"></div>
+    const hmac = await crypto.subtle.sign("HMAC", cryptoKey, hexToBytes(timeHex));
+    const hmacBytes = new Uint8Array(hmac);
+    const offset = hmacBytes[hmacBytes.length - 1] & 0xf;
 
-        </div>
-    </section>
+    const code =
+      ((hmacBytes[offset] & 0x7f) << 24) |
+      ((hmacBytes[offset + 1] & 0xff) << 16) |
+      ((hmacBytes[offset + 2] & 0xff) << 8) |
+      (hmacBytes[offset + 3] & 0xff);
 
+    return (code % 1_000_000).toString().padStart(6, "0");
+  }
 
-    <section class="history">
-        <div class="wrapper-history">
-            <div class="ten-vh-divider"></div>
-            <h2 class="bigger-title">complete resume</h2>
+  async function getOTP(secret) {
+    try {
+      const res = await fetch('http://localhost:8000/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret })
+      });
 
+      const data = await res.json();
+      return data.otp || 'Invalid response';
+    } catch (err) {
+      console.error(err);
+      return 'Error fetching OTP';
+    }
+  }
 
-            <div class="resume-item">
-                <div class="resume-title">Java development, Nackademin yrkeshögskola</div class="resume-title">
-                <div class="resume-timestamp">August 2022 - Current (until June 2024)</div>
-                <div class="resume-text">Multifaceted education with a focus on test-driven development of Java.
-                    As well as front end, database technology, functional programming and devops.
-                </div>
-                <br><div>These are my courses at
-                    <a href="../nackademin">Nackademin</a>
-                    (in swedish) (wip)
-                </div>
+  const updateOTP = async () => {
+    if (!secret || btoa(secret) === stringToReplaceAsB64) {
+      otpEl.textContent = 'No secret';
+      return;
+    }
+    otpEl.textContent = await generateOTP(secret)
+  }
+  function updateTimer() {
+    const seconds = 30 - Math.floor((Date.now() / 1000) % 30);
+    timerEl.textContent = `Next in ${seconds}s`;
+    requestAnimationFrame(updateTimer);
+  }
 
-            </div>
+  async function scheduleUpdates() {
+    while (true) {
+      const now = Date.now();
+      const delay = 30000 - (now % 30000);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      await updateOTP();
+    }
+  }
 
-            <div class="resume-item">
-                <div class="resume-title">Treasurer, Tyresö Ju-jutsu sports organisation</div class="resume-title">
-                <div class="resume-timestamp">April 2019 - July 2022</div>
-                <div class="resume-text">Founding member.</div>
+  setSecretBtn.addEventListener('click', () => {
+    const value = secretInput.value.trim();
+    if (value) {
+      secret = value;
+      updateOTP();
+    }
+  });
 
-            </div>
-
-            <div class="resume-item">
-                <div class="resume-title">Service technician, Mekina AB</div>
-                <div class="resume-timestamp">September 2019 - Current (on study leave)</div>
-                <div class="resume-text">Responsible for calibration of customer tools, including starting up the
-                    calibration business within the company. Also helped out in the store counter and warehouse
-                    receiving
-                    and posting packages.
-                    Setting up network during relocation and NAT servers for the company.
-                </div>
-
-            </div>
-
-            <div class="resume-item">
-                <div class="resume-title">Service technician, Swedol AB</div class="resume-title">
-                <div class="resume-timestamp">December 2015 - September 2019</div>
-                <div class="resume-text">Repaired different types of tools from the Swedol catalog. Rotary lasers,
-                    electric
-                    generators & compressors etc. Responsible for calibration of customer tools.
-                    Relocated to Mekina due to reorganization
-                </div>
-
-            </div>
-
-            <div class="resume-item">
-                <div class="resume-title">Naturentreprenader AB</div class="resume-title">
-                <div class="resume-timestamp">September 2015 - November 2015</div>
-                <div class="resume-text">Employment ended early due to unstable market.</div>
-
-            </div>
-
-            <div class="resume-item">
-                <div class="resume-title">Mio Möbler</div class="resume-title">
-                <div class="resume-timestamp">June 2015 - September 2015</div>
-                <div class="resume-text">Part time summer job.</div>
-
-            </div>
-
-            <div class="resume-item">
-                <div class="resume-title">Aluscand</div class="resume-title">
-                <div class="resume-timestamp">June 2015 - December 2015</div>
-                <div class="resume-text">Time set employment due to my plans to relocate to continental Europe during
-                    2016. Worked the factory floor manufacturing glass slide panels. For example the smoking booths at
-                    Arlanda.
-                </div>
-
-            </div>
-
-            <div class="resume-item">
-                <div class="resume-title">Internship, SVT department of sound processing</div class="resume-title">
-                <div class="resume-timestamp">November 2014</div>
-                <div class="resume-text">Usually reserved for students at Luleå Tekniska Universitet.
-                    Sit alongs during mixing as well as mixing a few show episodes by myself.
-                </div>
-                <div class="resume-text">Also coffee bringer.</div>
-
-            </div>
-
-            <div class="resume-item">
-                <div class="resume-title">Internship Klarateatern</div class="resume-title">
-                <div class="resume-timestamp">May 2014</div>
-                <div class="resume-text">Interned as an extra hand for the sound technician.
-                    Arranged microphones, and controlled background music as well as the mixer.
-                </div>
-
-            </div>
-
-            <div class="resume-item">
-                <div class="resume-title">Ica Sickla</div class="resume-title">
-                <div class="resume-timestamp">June 2014 - June 2015</div>
-                <div class="resume-text">My first job where I had a great mentor that guided me into my working life.
-                </div>
-
-            </div>
-
-            <div class="resume-item">
-                <div class="resume-title">Nacka Upper Secondary School - Music production</div class="resume-title">
-                <div class="resume-timestamp">August 2011 - June 2014</div>
-                <div class="resume-text">Music production with focus on studio recording and live audio.
-                    Received scholarship for being an especially meritorious student.
-                </div>
-
-            </div>
-
-            <div class="three-vh-divider"></div>
-
-            </div>
-        </section>
-    </div>
-
-
-
+  updateOTP();
+  scheduleUpdates();
+  updateTimer();
+</script>
 </body>
 </html>
