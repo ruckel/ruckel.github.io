@@ -81,7 +81,7 @@
 
 <script>
   const urlParams = new URLSearchParams(window.location.search);
-  let apiUrl = 'http://localhost:8000'
+  let apiUrl = urlParams.get('apiurl') || 'http://localhost:8000'
   let secret = urlParams.get('secret')
 
   const otpEl = document.getElementById('otp');
