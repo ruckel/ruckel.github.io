@@ -49,6 +49,10 @@
       border: none;
       cursor: pointer;
     }
+    .clickable {
+      cursor: pointer; /* 👈 Add this */
+    }
+
     .hidden {
       display: none;
     }
@@ -166,10 +170,12 @@
     if (!secret) {
       otpEl.textContent = 'No secret';
       timerEl.className ='timer hidden'
+      otpEl.className = 'otp'
       updateTimer()
       return;
     }
     otpEl.textContent = await generateOTP(secret)
+    otpEl.className = 'otp clickable'
     updateTimer()
     timerEl.className = 'timer'
   }
