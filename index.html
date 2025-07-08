@@ -49,6 +49,9 @@
       border: none;
       cursor: pointer;
     }
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -58,7 +61,13 @@
 
 <div class="secret-input">
   <input type="text" id="secretInput" placeholder="Enter secret" />
-  <button id="setSecret">Set Secret</button>
+  <button id="setSecret">Set secret</button>
+</div>
+
+<div class="secret-input">
+  <button id="pick-secret-1">secret 1</button>
+  <button id="pick-secret-2">secret 2</button>
+  <button id="pick-secret-3">secret 3</button>
 </div>
 
 <script>
@@ -72,6 +81,9 @@
   const timerEl = document.getElementById('timer');
   const secretInput = document.getElementById('secretInput');
   const setSecretBtn = document.getElementById('setSecret');
+  const secretBtn1 = document.getElementById('pick-secret-1')
+  const secretBtn2 = document.getElementById('pick-secret-2')
+  const secretBtn3 = document.getElementById('pick-secret-3')
 
   async function generateOTP(secret) {
     function base32tohex(base32) {
@@ -127,16 +139,16 @@
     return (code % 1_000_000).toString().padStart(6, "0");
   }
 
-  async function getOTP(secret) {
+  async function getSecret(secret) {
     try {
-      const res = await fetch(`${apiUrl}/generate`, {
+      const res = await fetch(`${apiUrl}/secret`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ secret })
       });
 
       const data = await res.json();
-      return data.otp || 'Invalid response';
+      return data.secret || 'Invalid response';
     } catch (err) {
       console.error(err);
       return 'Error fetching OTP';
@@ -172,6 +184,23 @@
       updateOTP();
     }
   });
+
+  async function getPreDefSecret(id) {
+    secret = await getSecret(id)
+    console.log({secret})
+    updateOTP()
+  }
+  secretBtn1.addEventListener('click', () => { getPreDefSecret(1) })
+  secretBtn2.addEventListener('click', () => { getPreDefSecret(2) })
+  secretBtn3.addEventListener('click', () => { getPreDefSecret(3) })
+
+  if (apiUrl === 'http://localhost:8000') {
+    if (window.location.host.split(':')[0] !== 'localhost') {
+      secretBtn1.className = 'hidden'
+      secretBtn2.className = 'hidden'
+      secretBtn3.className = 'hidden'
+    }
+  }
 
   updateOTP();
   scheduleUpdates();
