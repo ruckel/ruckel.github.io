@@ -216,10 +216,16 @@
     const value = apiInput.value.trim()
     if (!value) {
       apiDiv.className = 'secret-input'
+      secretBtn1.className = 'hidden'
+      secretBtn2.className = 'hidden'
+      secretBtn3.className = 'hidden'
       return
     }
     apiUrl = value
     apiDiv.className = 'secret-input hidden'
+    secretBtn1.className = ''
+    secretBtn2.className = ''
+    secretBtn3.className = ''
     updateOTP()
   })
 
