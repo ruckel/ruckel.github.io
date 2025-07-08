@@ -62,6 +62,7 @@
 </div>
 
 <script>
+  const apiUrl = 'http://localhost:8000'
   const urlParams = new URLSearchParams(window.location.search);
   const stringToReplace = "{{OTP_SECRET}}"
   const stringToReplaceAsB64 = 'e3tPVFBfU0VDUkVUfX0='
@@ -128,7 +129,7 @@
 
   async function getOTP(secret) {
     try {
-      const res = await fetch('http://localhost:8000/generate', {
+      const res = await fetch(`${apiUrl}/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ secret })
