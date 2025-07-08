@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ruckel's OTP generator</title>
+  <style>
+    body {
+      font-family: Cantarell, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #222;
+      color: #eee;
+    }
+    h1 {
+      font-size: 2rem;
+      color: inherit;
+    }
+    .otp {
+      font-size: 3rem;
+      margin: 1rem;
+      background: #eee;
+      color: #111;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .timer { color: #666; }
+    .secret-input {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+    }
+    input[type="text"] {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: none;
+      width: 300px;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      background: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<h1>OTP generator</h1>
+<div class="otp" id="otp">Loading...</div>
+<div class="timer" id="timer"></div>
+
+<div class="secret-input">
+  <input type="text" id="secretInput" placeholder="Enter secret" />
+  <button id="setSecret">Set Secret</button>
+</div>
+
+<script>
+  const apiUrl = 'http://localhost:8000'
+  const urlParams = new URLSearchParams(window.location.search);
+  const stringToReplace = "J6LLSQOOI6SIQIU22UPYRFQN7PBHIKKTKAQZNCKG2GVTI242B2IUJNU5PHONBQM6"
+  const stringToReplaceAsB64 = 'e3tPVFBfU0VDUkVUfX0='
+  let secret = urlParams.get('secret') || stringToReplace;
+
+  const otpEl = document.getElementById('otp');
+  const timerEl = document.getElementById('timer');
+  const secretInput = document.getElementById('secretInput');
+  const setSecretBtn = document.getElementById('setSecret');
+
+  async function generateOTP(secret) {
+    function base32tohex(base32) {
+      const base32chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+      let bits = "";
+      let hex = "";
+
+      base32 = base32.replace(/=+$/, "").toUpperCase();
+
+      for (let i = 0; i < base32.length; i++) {
+        const val = base32chars.indexOf(base32.charAt(i));
+        if (val === -1) throw new Error(`Invalid base32 character: ${base32.charAt(i)}`);
+        bits += val.toString(2).padStart(5, "0");
+      }
+
+      for (let i = 0; i + 4 <= bits.length; i += 4) {
+        hex += parseInt(bits.substring(i, i + 4), 2).toString(16);
+      }
+
+      return hex;
+    }
+
+    function hexToBytes(hex) {
+      const bytes = [];
+      for (let c = 0; c < hex.length; c += 2) {
+        bytes.push(parseInt(hex.substr(c, 2), 16));
+      }
+      return new Uint8Array(bytes);
+    }
+
+    const keyHex = base32tohex(secret);
+    const epoch = Math.floor(Date.now() / 1000);
+    const timeHex = Math.floor(epoch / 30).toString(16).padStart(16, "0");
+
+    const cryptoKey = await crypto.subtle.importKey(
+      "raw",
+      hexToBytes(keyHex),
+      { name: "HMAC", hash: "SHA-1" },
+      false,
+      ["sign"]
+    );
+
+    const hmac = await crypto.subtle.sign("HMAC", cryptoKey, hexToBytes(timeHex));
+    const hmacBytes = new Uint8Array(hmac);
+    const offset = hmacBytes[hmacBytes.length - 1] & 0xf;
+
+    const code =
+      ((hmacBytes[offset] & 0x7f) << 24) |
+      ((hmacBytes[offset + 1] & 0xff) << 16) |
+      ((hmacBytes[offset + 2] & 0xff) << 8) |
+      (hmacBytes[offset + 3] & 0xff);
+
+    return (code % 1_000_000).toString().padStart(6, "0");
+  }
+
+  async function getOTP(secret) {
+    try {
+      const res = await fetch(`${apiUrl}/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret })
+      });
+
+      const data = await res.json();
+      return data.otp || 'Invalid response';
+    } catch (err) {
+      console.error(err);
+      return 'Error fetching OTP';
+    }
+  }
+
+  const updateOTP = async () => {
+    if (!secret || btoa(secret) === stringToReplaceAsB64) {
+      otpEl.textContent = 'No secret';
+      return;
+    }
+    otpEl.textContent = await generateOTP(secret)
+  }
+  function updateTimer() {
+    const seconds = 30 - Math.floor((Date.now() / 1000) % 30);
+    timerEl.textContent = `Next in ${seconds}s`;
+    requestAnimationFrame(updateTimer);
+  }
+
+  async function scheduleUpdates() {
+    while (true) {
+      const now = Date.now();
+      const delay = 30000 - (now % 30000);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      await updateOTP();
+    }
+  }
+
+  setSecretBtn.addEventListener('click', () => {
+    const value = secretInput.value.trim();
+    if (value) {
+      secret = value;
+      updateOTP();
+    }
+  });
+
+  updateOTP();
+  scheduleUpdates();
+  updateTimer();
+</script>
+</body>
+</html>
