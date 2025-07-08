@@ -44,7 +44,7 @@
       padding: 0.5rem 1rem;
       font-size: 1rem;
       border-radius: 0.5rem;
-      background: #4caf50;
+      background: #666;
       color: white;
       border: none;
       cursor: pointer;
@@ -56,6 +56,7 @@
 </head>
 <body>
 <h1>OTP generator</h1>
+<div>click to copy</div>
 <div class="otp" id="otp">Loading...</div>
 <div class="timer" id="timer"></div>
 
@@ -69,10 +70,14 @@
   <button id="pick-secret-2">secret 2</button>
   <button id="pick-secret-3">secret 3</button>
 </div>
+<div class="secret-input" id="api">
+  <input type="text" id="apiUrlInput" placeholder="Enter api url" />
+  <button id="setApiUrl">Set API url</button>
+</div>
 
 <script>
-  const apiUrl = 'http://localhost:8000'
   const urlParams = new URLSearchParams(window.location.search);
+  let apiUrl = 'http://localhost:8000'
   let secret = urlParams.get('secret')
 
   const otpEl = document.getElementById('otp');
@@ -82,6 +87,9 @@
   const secretBtn1 = document.getElementById('pick-secret-1')
   const secretBtn2 = document.getElementById('pick-secret-2')
   const secretBtn3 = document.getElementById('pick-secret-3')
+  const apiDiv = document.getElementById('api')
+  const apiInput = document.getElementById('apiUrlInput')
+  const apiInputBtn = document.getElementById('setApiUrl')
 
   async function generateOTP(secret) {
     function base32tohex(base32) {
@@ -138,6 +146,7 @@
   }
 
   async function getSecret(secret) {
+    if (apiUrl === 'http://localhost:8000') console.log('local')
     try {
       const res = await fetch(`${apiUrl}/secret`, {
         method: 'POST',
@@ -190,14 +199,26 @@
 
   async function getPreDefSecret(id) {
     secret = await getSecret(id)
-    console.log({secret})
+    // console.log({secret})
     updateOTP()
   }
   secretBtn1.addEventListener('click', () => { getPreDefSecret(1) })
   secretBtn2.addEventListener('click', () => { getPreDefSecret(2) })
   secretBtn3.addEventListener('click', () => { getPreDefSecret(3) })
 
+  apiInputBtn.addEventListener('click', () => {
+    const value = apiInput.value.trim()
+    if (!value) {
+      apiDiv.className = 'secret-input'
+      return
+    }
+    apiUrl = value
+    apiDiv.className = 'secret-input hidden'
+    updateOTP()
+  })
+
   if (apiUrl === 'http://localhost:8000') {
+    apiDiv.className = 'secret-input'
     if (window.location.host.split(':')[0] !== 'localhost') {
       secretBtn1.className = 'hidden'
       secretBtn2.className = 'hidden'
@@ -205,9 +226,29 @@
     }
   }
 
-  updateOTP();
-  scheduleUpdates();
-  updateTimer();
+  otpEl.addEventListener('click', async () => {
+    const otp = otpEl.textContent.trim();
+    if (otp === 'No secret') return
+    try {
+      await navigator.clipboard.writeText(otp);
+      const original = otpEl.textContent;
+      otpEl.textContent = 'Copied!';
+
+      setTimeout(() => {
+        otpEl.textContent = original;
+      }, 1000);
+    } catch (err) {
+      console.error('Failed to copy OTP:', err);
+    }
+  });
+
+
+  function main() {
+    updateOTP();
+    scheduleUpdates();
+    updateTimer();
+  }
+  main()
 </script>
 </body>
 </html>
