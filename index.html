@@ -73,9 +73,7 @@
 <script>
   const apiUrl = 'http://localhost:8000'
   const urlParams = new URLSearchParams(window.location.search);
-  const stringToReplace = "J6LLSQOOI6SIQIU22UPYRFQN7PBHIKKTKAQZNCKG2GVTI242B2IUJNU5PHONBQM6"
-  const stringToReplaceAsB64 = 'e3tPVFBfU0VDUkVUfX0='
-  let secret = urlParams.get('secret') || stringToReplace;
+  let secret = urlParams.get('secret')
 
   const otpEl = document.getElementById('otp');
   const timerEl = document.getElementById('timer');
@@ -156,13 +154,14 @@
   }
 
   const updateOTP = async () => {
-    if (!secret || btoa(secret) === stringToReplaceAsB64) {
+    if (!secret) {
       otpEl.textContent = 'No secret';
       return;
     }
     otpEl.textContent = await generateOTP(secret)
   }
   function updateTimer() {
+    if (!secret) return
     const seconds = 30 - Math.floor((Date.now() / 1000) % 30);
     timerEl.textContent = `Next in ${seconds}s`;
     requestAnimationFrame(updateTimer);
@@ -182,6 +181,7 @@
     if (value) {
       secret = value;
       updateOTP();
+      updateTimer()
     }
   });
 
@@ -189,6 +189,7 @@
     secret = await getSecret(id)
     console.log({secret})
     updateOTP()
+    updateTimer()
   }
   secretBtn1.addEventListener('click', () => { getPreDefSecret(1) })
   secretBtn2.addEventListener('click', () => { getPreDefSecret(2) })
